@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Một lá thư nhỏ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta property="og:title" content="Một lá thư nhỏ">
+<meta property="og:description" content="Có vài dòng muốn gửi đến em.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;background:#fff2f8}
+body{min-height:100dvh}
+.bg{position:fixed;inset:0;overflow:hidden;background:radial-gradient(circle at 15% 12%,#fff 0 7%,transparent 20%),radial-gradient(circle at 88% 12%,rgba(255,240,170,.75),transparent 24%),linear-gradient(135deg,#fff5ca,#ffe0ee 48%,#e2f8ff)}
+.bg:before{content:"";position:absolute;inset:-80px;background:radial-gradient(circle at 18% 74%,rgba(255,111,174,.18),transparent 24%),radial-gradient(circle at 88% 72%,rgba(170,140,255,.16),transparent 28%);filter:blur(16px);animation:bgMove 9s ease-in-out infinite alternate}
+@keyframes bgMove{to{transform:translate(28px,-24px) scale(1.04)}}
+.float{position:absolute;pointer-events:none;opacity:.75;filter:drop-shadow(0 0 9px rgba(255,255,255,.85));animation:floatUp linear forwards}
+@keyframes floatUp{from{transform:translateY(110vh) rotate(0) scale(.75);opacity:0}12%{opacity:.8}to{transform:translateY(-120px) rotate(240deg) scale(1.15);opacity:0}}
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none;transform:scale(.98);transition:.75s ease;z-index:4}
+.screen.active{opacity:1;pointer-events:auto;transform:scale(1)}
+.card{position:relative;width:min(92vw,430px);text-align:center;padding:28px 20px 34px;border-radius:34px;background:rgba(255,255,255,.74);border:1px solid rgba(255,255,255,.9);box-shadow:0 28px 90px rgba(255,111,174,.25),inset 0 0 24px rgba(255,255,255,.75);backdrop-filter:blur(18px);overflow:hidden}
+.card:before{content:"";position:absolute;inset:-100px;background:linear-gradient(120deg,transparent 35%,rgba(255,255,255,.55),transparent 65%);transform:translateX(-280px) rotate(13deg);animation:shine 4s ease-in-out infinite}
+@keyframes shine{50%{transform:translateX(290px) rotate(13deg)}}
+.badge{position:relative;z-index:2;display:inline-flex;padding:8px 15px;border-radius:999px;color:#fff;font-size:13px;font-weight:800;background:linear-gradient(135deg,#ff72b2,#ffb36d);box-shadow:0 10px 24px rgba(255,111,174,.22)}
+h1{position:relative;z-index:2;margin-top:16px;color:#ff6fae;font-size:34px;text-shadow:0 3px 14px rgba(255,111,174,.22)}
+.card p{position:relative;z-index:2;width:86%;margin:12px auto 4px;color:#604250;font-size:15px;line-height:1.58}
+.envelope-wrap{position:relative;width:280px;height:235px;margin:16px auto 0;perspective:1100px;cursor:pointer;z-index:2}
+.mail-shadow{position:absolute;left:50%;bottom:26px;width:220px;height:34px;border-radius:50%;transform:translateX(-50%);background:rgba(120,70,95,.18);filter:blur(16px);animation:shadow 2.2s ease-in-out infinite}
+@keyframes shadow{50%{transform:translateX(-50%) scale(1.08);opacity:.82}}
+.envelope{position:absolute;left:50%;top:42px;width:230px;height:148px;transform:translateX(-50%);animation:mailFloat 2.2s ease-in-out infinite}
+@keyframes mailFloat{50%{transform:translateX(-50%) translateY(-10px) rotateZ(1deg)}}
+.env-back{position:absolute;inset:0;border-radius:14px;background:linear-gradient(145deg,#fff9ec,#ffd9e7);border:1px solid rgba(255,175,205,.6);box-shadow:0 22px 36px rgba(178,80,118,.22),inset 0 0 22px rgba(255,255,255,.82)}
+.env-left,.env-right,.env-bottom,.env-flap{position:absolute;width:0;height:0}
+.env-left{left:0;bottom:0;border-top:74px solid transparent;border-bottom:74px solid transparent;border-left:115px solid #ffc9dd;z-index:4}
+.env-right{right:0;bottom:0;border-top:74px solid transparent;border-bottom:74px solid transparent;border-right:115px solid #ffb8d1;z-index:4}
+.env-bottom{left:0;bottom:0;border-left:115px solid transparent;border-right:115px solid transparent;border-bottom:82px solid #ff9fc3;z-index:5}
+.env-flap{left:0;top:0;border-left:115px solid transparent;border-right:115px solid transparent;border-top:88px solid #ffe8f1;transform-origin:50% 0;z-index:6;filter:drop-shadow(0 5px 7px rgba(150,70,100,.16));transition:transform 1s cubic-bezier(.2,.9,.25,1.15),z-index .2s}
+.letter-preview{position:absolute;left:18px;bottom:18px;width:194px;height:120px;border-radius:14px;background:#fff;border:1px solid rgba(255,175,205,.55);box-shadow:0 12px 24px rgba(170,80,120,.15);transform:translateY(25px);transition:transform 1s cubic-bezier(.2,.8,.2,1);z-index:2;overflow:hidden}
+.letter-preview:before{content:"";position:absolute;inset:-40px;background:linear-gradient(120deg,transparent 35%,rgba(255,210,230,.55),transparent 65%);animation:paperShine 3s ease-in-out infinite}
+@keyframes paperShine{50%{transform:translateX(120px) rotate(12deg)}}
+.preview-icon{position:absolute;right:18px;top:17px;font-size:30px}
+.preview-line{position:absolute;left:20px;height:7px;border-radius:999px;background:rgba(255,130,180,.36)}
+.l1{top:32px;width:118px}.l2{top:54px;width:145px}.l3{top:76px;width:90px}
+.seal{position:absolute;left:50%;top:72px;width:46px;height:46px;transform:translateX(-50%);border-radius:50%;z-index:8;display:flex;justify-content:center;align-items:center;background:radial-gradient(circle at 35% 30%,#ffd6a8,#ff8bbd 45%,#e25591);box-shadow:0 7px 16px rgba(210,64,120,.35),inset 0 2px 5px rgba(255,255,255,.45);transition:.6s ease}
+.stamp{position:absolute;right:18px;top:18px;width:42px;height:34px;border-radius:8px;z-index:7;display:flex;align-items:center;justify-content:center;color:#ff6fae;font-size:11px;font-weight:900;background:#fff;border:1px dashed rgba(255,111,174,.55);transform:rotate(5deg)}
+.tap-text{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#9c7582;font-size:14px;font-weight:800;animation:tap 1.5s ease-in-out infinite}
+@keyframes tap{50%{opacity:1;transform:translateX(-50%) translateY(-4px)}}
+.envelope-wrap.opening .env-flap{z-index:1;transform:rotateX(180deg)}
+.envelope-wrap.opening .letter-preview{transform:translateY(-98px)}
+.envelope-wrap.opening .seal{opacity:0;transform:translateX(-50%) scale(.2) rotate(180deg)}
+.mini-pop{position:absolute;left:50%;top:105px;z-index:20;color:#ff6fae;text-shadow:0 0 12px rgba(255,111,174,.85);animation:miniPop 1.5s ease forwards}
+@keyframes miniPop{from{opacity:0;transform:translate(-50%,0) scale(.25)}20%{opacity:1}to{opacity:0;transform:translate(calc(-50% + var(--x)),-135px) scale(1.25)}}
+.letter-screen{padding:12px}
+.letter-wrap{position:relative;width:min(94vw,720px);height:min(92dvh,780px);border-radius:32px;background:#fffdf7;border:1px solid rgba(255,255,255,.9);box-shadow:0 28px 90px rgba(120,70,100,.25),inset 0 0 26px rgba(255,255,255,.75);backdrop-filter:blur(16px);overflow:hidden;transform:translateY(25px) scale(.94);opacity:0;animation:letterIn .9s ease forwards}
+@keyframes letterIn{to{transform:translateY(0) scale(1);opacity:1}}
+.letter-top{position:sticky;top:0;z-index:3;padding:24px 22px 18px;text-align:center;background:linear-gradient(180deg,rgba(255,253,248,.98),rgba(255,253,248,.86));border-bottom:1px solid rgba(255,190,215,.35);backdrop-filter:blur(8px)}
+.small{display:inline-flex;padding:7px 14px;border-radius:999px;color:#fff;font-size:12px;font-weight:850;background:linear-gradient(135deg,#ff72b2,#ffb36d);box-shadow:0 8px 18px rgba(255,111,174,.2)}
+.letter-top h2{margin-top:11px;color:#ff6fae;font-size:28px;text-shadow:0 3px 14px rgba(255,111,174,.18)}
+.letter-top p{margin-top:8px;color:#9a7282;font-size:14px}
+.letter-content{height:calc(100% - 128px);overflow:auto;padding:24px 25px 34px;scroll-behavior:smooth}
+.letter-content::-webkit-scrollbar{width:7px}.letter-content::-webkit-scrollbar-thumb{background:rgba(255,111,174,.35);border-radius:999px}
+.letter-content p{margin-bottom:18px;color:#604250;line-height:1.82;font-size:16px;text-align:left}
+.letter-content p.first::first-letter{font-size:36px;color:#ff6fae;font-weight:800;float:left;line-height:1;padding-right:6px}
+.highlight{margin:25px 0;padding:18px;border-radius:22px;background:linear-gradient(135deg,rgba(255,235,246,.9),rgba(255,247,215,.9));border:1px solid rgba(255,190,220,.45);box-shadow:0 12px 30px rgba(255,111,174,.1);color:#754d62;font-weight:650;line-height:1.65}
+.signal-box{margin-top:26px;padding:20px 18px;border-radius:24px;background:rgba(255,245,250,.9);border:1px solid rgba(255,190,220,.55);box-shadow:inset 0 0 20px rgba(255,255,255,.75)}
+.signal-title{color:#ff6fae;font-weight:850;font-size:17px;margin-bottom:12px}
+.signal-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.signal{padding:14px 12px;border-radius:20px;background:#fff;text-align:center;box-shadow:0 10px 20px rgba(255,111,174,.1)}
+.signal b{display:block;font-size:26px}.signal span{display:block;margin-top:5px;color:#745465;font-size:13.5px;line-height:1.4}
+.end-note{margin-top:25px;text-align:center;color:#9b7484;font-size:14px;line-height:1.55}
+.decor-heart{position:absolute;color:rgba(255,111,174,.35);font-size:28px;animation:heartFloat 3.2s ease-in-out infinite}
+.dh1{left:18px;top:22px}.dh2{right:20px;top:74px;animation-delay:.7s}.dh3{right:30px;bottom:22px;animation-delay:1.2s}
+@keyframes heartFloat{50%{transform:translateY(-12px) rotate(7deg)}}
+@media(max-width:480px){.letter-wrap{height:94dvh;border-radius:26px}.letter-top{padding:20px 16px 15px}.letter-top h2{font-size:24px}.letter-content{padding:20px 18px 32px;height:calc(100% - 120px)}.letter-content p{font-size:15.3px;line-height:1.78}.signal-row{grid-template-columns:1fr}}
+
+/* BẢN SỬA GỌN THEO YÊU CẦU */
+.cover-icon{
+    position:relative;
+    z-index:2;
+    width:82px;
+    height:82px;
+    margin:4px auto 8px;
+    border-radius:28px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:46px;
+    background:rgba(255,255,255,.78);
+    box-shadow:
+        0 16px 35px rgba(255,111,174,.24),
+        inset 0 0 20px rgba(255,255,255,.88);
+    animation:coverIconFloat 2.2s ease-in-out infinite;
+}
+
+@keyframes coverIconFloat{
+    0%,100%{
+        transform:translateY(0) rotate(-3deg);
+    }
+    50%{
+        transform:translateY(-8px) rotate(4deg);
+    }
+}
+
+.intro-card{
+    padding-top:30px !important;
+}
+
+.intro-card .envelope-wrap{
+    margin-top:6px !important;
+}
+
+.compact-letter-top{
+    padding:18px 22px 14px !important;
+}
+
+.inside-heart{
+    width:58px;
+    height:58px;
+    margin:0 auto;
+    border-radius:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:34px;
+    background:linear-gradient(135deg,rgba(255,238,247,.96),rgba(255,249,223,.96));
+    box-shadow:
+        0 12px 28px rgba(255,111,174,.18),
+        inset 0 0 16px rgba(255,255,255,.85);
+    animation:heartBeat 1.7s ease-in-out infinite;
+}
+
+@keyframes heartBeat{
+    0%,100%{
+        transform:scale(1);
+    }
+    45%{
+        transform:scale(1.12);
+    }
+    60%{
+        transform:scale(.98);
+    }
+}
+
+.letter-content{
+    height:calc(100% - 90px) !important;
+    padding-top:20px !important;
+}
+
+@media(max-width:480px){
+    .compact-letter-top{
+        padding:15px 16px 12px !important;
+    }
+
+    .inside-heart{
+        width:52px;
+        height:52px;
+        font-size:30px;
+    }
+
+    .letter-content{
+        height:calc(100% - 80px) !important;
+    }
+}
+
+</style>
+</head>
+<body>
+<audio id="bgMusic" src="nhac.mp3" loop></audio>
+<div class="bg" id="floatingLayer"></div>
+
+<section id="intro" class="screen active">
+    <div class="card">
+        <div class="cover-icon">💌</div>
+        <div id="envelope" class="envelope-wrap">
+            <div class="mail-shadow"></div>
+            <div class="envelope">
+                <div class="letter-preview">
+                    <div class="preview-icon">💌</div>
+                    <div class="preview-line l1"></div><div class="preview-line l2"></div><div class="preview-line l3"></div>
+                </div>
+                <div class="env-back"></div><div class="env-left"></div><div class="env-right"></div><div class="env-bottom"></div><div class="env-flap"></div>
+                <div class="seal">♡</div><div class="stamp">TO</div>
+            </div>
+            <div class="tap-text">Bấm vào lá thư</div>
+        </div>
+    </div>
+</section>
+
+<section id="letterScreen" class="screen letter-screen">
+    <div class="letter-wrap">
+        <span class="decor-heart dh1">♡</span><span class="decor-heart dh2">✦</span><span class="decor-heart dh3">♡</span>
+        <div class="letter-top compact-letter-top">
+            <div class="inside-heart">❤️</div>
+        </div>
+        <div class="letter-content">
+            <p>Hôm nay anh viết những dòng này để gửi đến em. Có thể sẽ hơi dài một chút, nhưng anh mong em sẽ đọc hết.</p>
+<p>Chắc em cũng đã xem story mà anh từng chia sẻ cách đây một thời gian. Lúc đó có lẽ em cũng biết anh muốn gửi đến ai rồi.</p>
+<p>Anh với em kết bạn chắc cũng mới hơn hai tháng thôi. Dù hai đứa chưa nhắn tin với nhau nhiều, nhưng có một tin nhắn của em cho anh cái cảm giác mà suốt mấy năm qua anh chưa từng được cảm nhận lại. Có lẽ vì vậy mà đến bây giờ anh vẫn chưa thể quên được em.</p>
+<p>Từ lúc mới kết bạn đến giờ, anh vẫn luôn âm thầm theo dõi những gì em chia sẻ. Nhiều lần anh muốn tìm một lý do nào đó để có cơ hội nhắn tin với em. Nhưng anh lại không biết phải bắt đầu như thế nào. Anh là người nhắn tin khá nhạt, nên cuối cùng chỉ biết tạo ra một không gian như thế này để có thể nói với em những gì mà chắc anh không có cơ hội nhắn qua tin nhắn.</p>
+<p>Thật lòng thì anh cũng từng nghĩ có lẽ em thấy anh phiền, hoặc không thích cách anh nói chuyện, hay là một lý do nào đó mà anh không biết. Nhưng dù vậy, anh vẫn muốn nói ra những điều này, vì nếu như không nói ra, anh sẽ còn tiếc hơn. Anh đã rất nhiều lần mất đi những cơ hội từ sự im lặng hèn nhát như vậy rồi, nên lần này anh không muốn nó mất đi nữa. Mà anh nghĩ lần này chắc cũng không phải là một cơ hội gì cho anh.</p>
+<p>Có thể đọc đến đây không biết em có nghĩ anh là 1 thằng nói nhiều hay sến súa hay là như thế nào không. Nhưng đây là những lời thật lòng nhất của anh và cũng là lần đầu tiên anh nói với ai đó như vậy, nên mong em thông cảm.</p>
+<p>Có lẽ em cũng sẽ thắc mắc tại sao anh lại để ý em khi hai đứa còn chưa biết gì nhiều về nhau và cũng chỉ mới nhắn tin với nhau vài lần. Thật ra anh cũng không biết phải giải thích như thế nào nữa. Chắc là từ cái tin nhắn của em hôm đó, rồi sau này anh để ý em nhiều hơn qua những gì em chia sẻ. Anh chỉ thấy em là một cô gái nhỏ nhắn, dễ thương, cách em nhắn tin cũng rất dễ thương. Có thể với em đó chỉ là những điều rất bình thường thôi, nhưng với anh thì nó lại để lại một cảm giác rất khác. Cũng vì vậy mà anh mới muốn có cơ hội được biết em nhiều hơn, chứ không phải chỉ dừng lại ở vài tin nhắn.</p>
+            <p>Anh thật sự rất nghiêm túc muốn có một cơ hội để tìm hiểu về em.</p>
+            <p>Nếu em đã đọc hết rồi, mong em cho anh một tín hiệu bằng thả một icon thôi cũng được. Nếu em đồng ý cho anh một cơ hội thì thả haha nha, tại anh quen thấy em thả haha với anh rồi. Còn nếu em cảm thấy phiền hay đang có một ai đó khác rồi thì thả cho anh một trái tim thôi cũng được...🙂‍↕️</p>
+            <p>Dù thế nào thì anh cũng cảm ơn em vì đã dành thời gian đọc hết những dòng này. Anh chỉ muốn nói ra một lần để sau này không còn phải tự trách mình vì đã im lặng nữa. Còn câu trả lời như thế nào cũng được, em cứ thoải mái là được.</p>
+        </div>
+    </div>
+</section>
+
+<script>
+const intro = document.getElementById("intro");
+const letterScreen = document.getElementById("letterScreen");
+const envelope = document.getElementById("envelope");
+const floatingLayer = document.getElementById("floatingLayer");
+let opened = false;
+function random(min,max){return Math.random()*(max-min)+min}
+function createFloating(){
+    const icons=["♡","✦","💌","🌷","✨"];
+    const item=document.createElement("span");
+    item.className="float";
+    item.innerHTML=icons[Math.floor(Math.random()*icons.length)];
+    item.style.left=Math.random()*100+"vw";
+    item.style.fontSize=random(14,28)+"px";
+    item.style.animationDuration=random(7,13)+"s";
+    floatingLayer.appendChild(item);
+    setTimeout(()=>item.remove(),14000);
+}
+setInterval(createFloating,480);
+function popMiniIcons(){
+    for(let i=0;i<10;i++){
+        const item=document.createElement("div");
+        item.className="mini-pop";
+        item.innerHTML=["♡","✦","💌","✨"][Math.floor(Math.random()*4)];
+        item.style.setProperty("--x",(-100+Math.random()*200)+"px");
+        item.style.fontSize=(16+Math.random()*14)+"px";
+        item.style.animationDelay=(i*.05)+"s";
+        envelope.appendChild(item);
+        setTimeout(()=>item.remove(),1800);
+    }
+}
+function openLetter(){
+    const bgMusic = document.getElementById("bgMusic");
+    if(bgMusic){
+        bgMusic.volume = 0.7;
+        bgMusic.play().catch(()=>{});
+    }
+
+    if(opened)return;
+    opened=true;
+    envelope.classList.add("opening");
+    popMiniIcons();
+    setTimeout(()=>{
+        intro.classList.remove("active");
+        letterScreen.classList.add("active");
+    },1250);
+}
+envelope.addEventListener("click",openLetter);
+</script>
+</body>
+</html>
